@@ -17,7 +17,7 @@ jobs:
   publish:
     name: Build and publish
     needs: ci
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 15
     permissions:
       contents: write
@@ -31,6 +31,7 @@ jobs:
         with:
           node-version: 22
       - name: Check that the tag, rayfin.base.yml and the changelog agree
+        shell: bash
         run: |
           tag="${GITHUB_REF_NAME#v}"
           base_version=$(sed -n 's/^version: *//p' app/rayfin/rayfin.base.yml | head -n1 | tr -d '\r"' | xargs)
@@ -45,37 +46,35 @@ jobs:
           fi
       - name: Build the package
         run: |
-          name="fabric-weave-${GITHUB_REF_NAME#v}"
-          # export-ignore rules in .gitattributes decide what is left out
-          git archive --format=zip --prefix="$name/" -o "$name.zip" HEAD
-          unzip -Z1 "$name.zip" > listing.txt
-          echo "$(wc -l < listing.txt) entries"
-          for must in install.mjs backend/deploy.mjs LICENSE THIRD_PARTY_NOTICES.md app/package-lock.json app/rayfin/rayfin.base.yml app/scripts/validate-functions.mjs deployment/Deploy.ps1 deployment/Build-Package.ps1 deployment/customer.config.example.json docs/DEPLOYMENT-GUIDE.md; do
-            grep -qxF "$name/$must" listing.txt || { echo "the archive is missing $must"; exit 1; }
-          done
-          if grep -qE "^$name/(app/\.agents/|app/rayfin/rayfin\.yml$|tools/snapshots/|deployment/(customer\.config|last-deployment-result)\.json$)" listing.txt; then
-            echo "the archive contains files that must not ship (app/.agents, a generated rayfin.yml, tools/snapshots or a deployment config/result)"; exit 1
-          fi
-          rm listing.txt
-          echo "ASSET=$name.zip" >> "$GITHUB_ENV"
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          $asset = Join-Path $env:RUNNER_TEMP "fabric-weave-$version.zip"
+          .\deployment\Build-Package.ps1 -OutputZipPath $asset
+          "ASSET=$asset" >> $env:GITHUB_ENV
       - name: Check that the installer runs from the unpacked archive
         run: |
-          mkdir unpacked
-          unzip -q "$ASSET" -d unpacked
-          cd "unpacked/${ASSET%.zip}"
-          node install.mjs --help > /dev/null
+          $unpacked = Join-Path $env:RUNNER_TEMP 'unpacked'
+          Expand-Archive -LiteralPath $env:ASSET -DestinationPath $unpacked
+          $name = [IO.Path]::GetFileNameWithoutExtension($env:ASSET)
+          Set-Location -LiteralPath (Join-Path $unpacked $name)
+          node install.mjs --help > $null
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node install.mjs --prepare-only
-          test -s app/rayfin/rayfin.yml
-          node --test "tools/test/*.test.mjs"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          if (-not (Test-Path -LiteralPath 'app\rayfin\rayfin.yml')) { throw 'The installer did not prepare rayfin.yml.' }
+          $tests = Get-ChildItem -LiteralPath 'tools\test' -Filter '*.test.mjs' | ForEach-Object { $_.FullName }
+          node --test @tests
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Checksums
         run: |
-          sha256sum "$ASSET" > SHA256SUMS.txt
-          cat SHA256SUMS.txt
+          $checksum = Join-Path $env:RUNNER_TEMP 'SHA256SUMS.txt'
+          Copy-Item -LiteralPath "$env:ASSET.sha256" -Destination $checksum
+          "CHECKSUM=$checksum" >> $env:GITHUB_ENV
+          Get-Content -LiteralPath $checksum
       - name: Publish the release
         uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
         with:
           files: |
             ${{ env.ASSET }}
-            SHA256SUMS.txt
+            ${{ env.CHECKSUM }}
           generate_release_notes: true
           prerelease: ${{ contains(github.ref_name, '-') }}
