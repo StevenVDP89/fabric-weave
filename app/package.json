@@ -34,7 +34,7 @@
   "devDependencies": {
     "@microsoft/rayfin-cli": "^1.36.0-alpha",
     "@microsoft/rayfin-guide": "^1.36.0-alpha",
-    "typescript": "~5.7.2"
+    "typescript": "~7.0.2"
   },
   "rayfinScriptBases": {
     "build": "npm run -w @rayfin-app/data build && npm run -w @rayfin-app/frontend build",
