@@ -22,7 +22,7 @@
     "@rayfin-app/engine": "*"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0",
+    "@types/node": "^26.6.6",
     "rimraf": "^6.0.0",
     "typescript": "~5.7.2"
   }
