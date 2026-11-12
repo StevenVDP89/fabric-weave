@@ -1,0 +1,53 @@
+# Rayfin app configuration for Fabric Weave (the tracked source of truth).
+# `node install.mjs` generates the untracked app/rayfin/rayfin.yml from this file and adds the sign-in redirect URL
+# of your own tenant. Edit this file, not rayfin.yml. Run `node install.mjs --prepare-only` to regenerate it.
+id: fabric-weave
+name: Fabric Weave
+version: 1.0.0
+services:
+  functions:
+    enabled: true
+    path: packages/functions
+    buildCommand: npm run build
+    auth:
+      type: application
+  auth:
+    enabled: true
+    fabric:
+      enabled: true
+      externalEntraExchange: true
+    password:
+      enabled: false
+    # The installer adds the app's own hosting URL to the generated rayfin.yml after the first deployment.
+    allowedRedirectUris:
+      - http://localhost:5173
+      - http://127.0.0.1:5173
+  data:
+    enabled: true
+    path: packages/data
+    buildCommand: npm run build
+    dialect: mssql
+  staticHosting:
+    enabled: true
+    path: packages/frontend
+    folder: dist
+    buildCommand: npm run build:fabric
+    indexDocument: index.html
+    assetAccess: protected
+    embedded:
+      only: false
+  storage:
+    enabled: false
+secrets:
+  - name: AOAI_ENDPOINT
+    description: "Azure OpenAI endpoint used for AI drafts and the AI review (optional)."
+  - name: AOAI_DEPLOYMENT
+    description: "Azure OpenAI chat deployment name, for example gpt-4.1."
+  - name: AOAI_API_VERSION
+    description: "Azure OpenAI API version (optional, default 2024-10-21). Set a newer one, for example 2025-04-01-preview, for reasoning models."
+  - name: PORTFOLIO_PATH
+    description: "Optional (leave unset for an app-only install). OneLake path workspaceId/lakehouseId of the lakehouse the refresh pipeline writes portfolio.json to. Any other value, such as disabled, switches the Portfolio page off."
+  - name: SIGNING_KEY
+    description: "Random secret (32+ characters) that signs rollback snapshots. In-place changes are refused without it."
+  - name: APP_ADMINS
+    description: "Optional. Comma-separated sign-in names (email/UPN) or Entra object ids of app administrators, who see and change everything. Everyone else is limited to what Fabric lets them."

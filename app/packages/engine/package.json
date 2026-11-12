@@ -1,0 +1,24 @@
+{
+  "name": "@rayfin-app/engine",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Isomorphic AI-readiness engine: TMDL reader, rule catalog, scorer, fix generators, patcher and Fabric client.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "test": "tsc -b && node --test \"test/*.test.mjs\"",
+    "export:catalog": "node scripts/export-catalog.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "~5.7.2"
+  }
+}

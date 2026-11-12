@@ -1,0 +1,27 @@
+# Files that only help developers extend the app with coding agents or run the Rayfin
+# template's own tests are left out of the release archive (`git archive`). They stay in
+# the git repository. Nothing the installer, `npm ci` or `npm run build` needs is listed here.
+# app/scripts/validate-functions.mjs is used by the build and must NOT be excluded.
+
+/app/.agents/**                                export-ignore
+/app/AGENTS.md                                 export-ignore
+/app/.mcp.json                                 export-ignore
+/app/rayfin-template.yml                       export-ignore
+/app/scripts/scaffold.mjs                      export-ignore
+/app/scripts/scaffold.test.mjs                 export-ignore
+/app/scripts/scaffold.integration.test.mjs     export-ignore
+/app/scripts/run-template-tests.mjs            export-ignore
+/app/scripts/agent-context.test.mjs            export-ignore
+/app/scripts/functions-contract.test.mjs       export-ignore
+/app/scripts/generated-app-contract.test.mjs   export-ignore
+/app/scripts/guidance-flow.test.mjs            export-ignore
+/app/scripts/kit-typecheck.test.mjs            export-ignore
+/app/scripts/pack-combinations.test.mjs        export-ignore
+/app/scripts/pack-coverage.test.mjs            export-ignore
+/app/scripts/validate-functions.test.mjs       export-ignore
+/app/scripts/__fixtures__/**                   export-ignore
+/app/scripts/e2e-pack-coverage.json            export-ignore
+/app/scripts/pack-manifest.md                  export-ignore
+/tools/snapshots/**                            export-ignore
+/.devcontainer/**                              export-ignore
+/.github/**                                    export-ignore

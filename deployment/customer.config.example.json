@@ -1,0 +1,28 @@
+{
+  "_comment": "Copy this file to customer.config.json and fill it in. Keys that start with an underscore are comments. Replace every <...> value, or set it to an empty string to leave it out. customer.config.json is git-ignored.",
+
+  "tenantId": "<YOUR-ENTRA-TENANT-GUID>",
+  "_tenantId": "The installer stops when the Azure CLI is signed in to another tenant, so nothing lands in the wrong place. Deploy.ps1 signs in to this tenant for you.",
+
+  "workspaceId": "00000000-0000-0000-0000-000000000000",
+  "workspaceName": "Fabric Weave",
+  "capacityId": "<YOUR-FABRIC-CAPACITY-GUID>",
+  "_workspace": "workspaceId: an existing workspace. The all-zero GUID means 'not set': the workspace is then found by workspaceName, or created on capacityId when no workspace of that name exists. If the workspace already exists you can set capacityId to an empty string. Find the capacity id in the Fabric admin portal (Capacity settings).",
+
+  "aoaiEndpoint": "",
+  "aoaiDeployment": "gpt-4.1",
+  "aoaiApiVersion": "",
+  "_aoai": "Optional AI drafts and AI review. aoaiEndpoint looks like https://<resource>.openai.azure.com. Leave it empty to install without AI drafts. aoaiDeployment is the name of your chat deployment.",
+
+  "admins": [],
+  "_admins": "Optional app administrators (sign-in names or Entra object ids) who see and change everything the app can reach. Empty means the account that runs the installer.",
+
+  "appOnly": true,
+  "_appOnly": "true installs only the app: people inspect, score and fix the models they can reach. false also installs the lakehouse, notebooks, pipeline and nightly estate scan (adds the Portfolio page and usage numbers).",
+
+  "runPipeline": false,
+  "_runPipeline": "Only used when appOnly is false. true runs the estate scan once after installing.",
+
+  "adopt": false,
+  "optOutTelemetry": false
+}

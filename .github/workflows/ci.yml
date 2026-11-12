@@ -1,0 +1,158 @@
+name: CI
+
+# Also called by release.yml, so a release is only published when everything here passes.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  RAYFIN_TELEMETRY_OPTOUT: '1'
+
+jobs:
+  app:
+    name: App (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [22, 24]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Install
+        working-directory: app
+        run: npm ci --no-audit --no-fund
+      - name: Generate app/rayfin/rayfin.yml (git-ignored, written from rayfin.base.yml)
+        run: node install.mjs --prepare-only
+      - name: Typecheck
+        working-directory: app
+        run: npm run typecheck
+      - name: Lint
+        working-directory: app
+        run: npm run lint
+      - name: Frontend tests
+        working-directory: app
+        run: npm test
+      - name: Engine tests
+        working-directory: app
+        run: npm test -w @rayfin-app/engine
+      - name: Functions tests
+        working-directory: app
+        run: npm test -w @rayfin-app/functions
+      - name: Build (functions contract check, functions, data, frontend)
+        working-directory: app
+        run: npm run build
+      - name: Rule catalog drift guard
+        run: |
+          # The notebooks load backend/catalog/rule-catalog.json. It is generated from the engine, so it must be
+          # committed up to date. Fix: cd app; npm run build -w @rayfin-app/engine; npm run export:catalog -w @rayfin-app/engine
+          (cd app && npm run export:catalog -w @rayfin-app/engine)
+          git diff --exit-code -- backend/catalog
+          if [ -n "$(git status --porcelain -- backend/catalog)" ]; then
+            echo "backend/catalog has untracked or changed files after export:catalog"; git status --porcelain -- backend/catalog; exit 1
+          fi
+
+  audit:
+    name: Production dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: npm audit (production dependencies, high and critical)
+        working-directory: app
+        run: |
+          # Same as `npm audit --omit=dev --audit-level=high`, except that advisories reviewed in
+          # tools/audit-allowlist.json (dependencies only the Rayfin packages can bump) do not fail the build.
+          npm audit --omit=dev --audit-level=high || true
+          npm audit --omit=dev --json > "$RUNNER_TEMP/audit.json" || true
+          node ../tools/audit-check.mjs "$RUNNER_TEMP/audit.json"
+
+  python:
+    name: Notebooks (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.13']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Compile the notebooks
+        run: python -m py_compile backend/notebooks/*.py
+      - name: Parity tests (Python scorer against the TypeScript golden file)
+        run: python -m unittest discover -s backend/tests -p "test_*.py"
+
+  tools:
+    name: Installer and tools (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Syntax check (node --check takes one file at a time)
+        run: |
+          for f in install.mjs backend/deploy.mjs tools/*.mjs tools/lib/*.mjs; do
+            node --check "$f"
+          done
+      - name: Unit tests (installer, deploy helpers, preflight, teardown, audit check, lockfile guard)
+        run: node --test "tools/test/*.test.mjs"
+      - name: Installer writes app/rayfin/rayfin.yml from the base file
+        run: |
+          node install.mjs --prepare-only
+          test -s app/rayfin/rayfin.yml
+          grep -q APP_ADMINS app/rayfin/rayfin.yml
+      - name: Installer dry run (existing lakehouse)
+        run: >
+          node install.mjs
+          --workspace 00000000-0000-0000-0000-000000000001
+          --skip-backend --lakehouse 00000000-0000-0000-0000-000000000002
+          --admins admin@contoso.com --non-interactive
+          --skip-preflight --dry-run
+      - name: Installer dry run (full flow)
+        run: >
+          node install.mjs
+          --workspace 00000000-0000-0000-0000-000000000001
+          --admins admin@contoso.com --non-interactive
+          --skip-preflight --dry-run
+      - name: Teardown refuses bad input
+        run: |
+          if node tools/teardown.mjs --workspace not-a-guid; then
+            echo "teardown accepted a bad workspace id"; exit 1
+          fi

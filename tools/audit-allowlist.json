@@ -1,0 +1,11 @@
+{
+  "allow": [
+    {
+      "id": "GHSA-mrhx-c7xc-m3w5",
+      "package": "zod",
+      "reason": "zod <4.6.6 can exhaust memory on oversized constrained collections. The installed zod 4.3.6 is pinned (~4.3.6) by @microsoft/rayfin-tools-common, so only a Rayfin release can bump it. Revisit when the Rayfin packages move to zod 4.6.6 or later.",
+      "reviewed": "2026-10-26",
+      "expires": "2027-01-31"
+    }
+  ]
+}

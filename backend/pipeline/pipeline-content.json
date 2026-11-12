@@ -1,0 +1,77 @@
+{
+  "name": "PL_AI_Readiness_Refresh",
+  "properties": {
+    "annotations": [
+      "Fabric Weave",
+      "Tenant metadata inventory, usage, and quick score refresh"
+    ],
+    "concurrency": 1,
+    "activities": [
+      {
+        "name": "NB_01_Scan_Inventory",
+        "type": "TridentNotebook",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 1,
+          "retryIntervalInSeconds": 60,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "userProperties": [],
+        "typeProperties": {
+          "notebookId": "{{NB_01_ID}}",
+          "workspaceId": "{{WORKSPACE_ID}}"
+        }
+      },
+      {
+        "name": "NB_02_Usage",
+        "type": "TridentNotebook",
+        "dependsOn": [
+          {
+            "activity": "NB_01_Scan_Inventory",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 1,
+          "retryIntervalInSeconds": 60,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "userProperties": [],
+        "typeProperties": {
+          "notebookId": "{{NB_02_ID}}",
+          "workspaceId": "{{WORKSPACE_ID}}"
+        }
+      },
+      {
+        "name": "NB_03_Quick_Score",
+        "type": "TridentNotebook",
+        "dependsOn": [
+          {
+            "activity": "NB_02_Usage",
+            "dependencyConditions": [
+              "Succeeded"
+            ]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 1,
+          "retryIntervalInSeconds": 60,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "userProperties": [],
+        "typeProperties": {
+          "notebookId": "{{NB_03_ID}}",
+          "workspaceId": "{{WORKSPACE_ID}}"
+        }
+      }
+    ]
+  }
+}

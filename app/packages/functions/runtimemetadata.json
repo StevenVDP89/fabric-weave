@@ -1,0 +1,471 @@
+{
+  "schemaVersion": "2.0",
+  "functions": [
+    {
+      "functionName": "listWorkspaces",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "saveWorkspaceSetting",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "writeMode",
+          "type": "WriteMode",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "inScope",
+          "type": "boolean",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 3,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "listModels",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "assessModel",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "useJudge",
+          "type": "boolean",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 3,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "getFixProposals",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "useAi",
+          "type": "boolean",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 3,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "applyFixes",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "proposals",
+          "type": "FixProposal[]",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        },
+        {
+          "name": "baseDigest",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 3,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 4,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "rollbackChangeSet",
+      "delegateParameters": [
+        {
+          "name": "changeSetId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "discardLaterEdits",
+          "type": "boolean",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "getAgentReadiness",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "setApprovedForCopilot",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "approved",
+          "type": "boolean",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 3,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "draftBusinessContext",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "interviewBusinessContext",
+      "delegateParameters": [
+        {
+          "name": "workspaceId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "modelId",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        },
+        {
+          "name": "turns",
+          "type": "InterviewTurn[]",
+          "optional": false,
+          "hasDefault": false,
+          "position": 2,
+          "isFabricParameter": false
+        },
+        {
+          "name": "existing",
+          "type": "string",
+          "optional": false,
+          "hasDefault": false,
+          "position": 3,
+          "isFabricParameter": false
+        },
+        {
+          "name": "finish",
+          "type": "boolean",
+          "optional": false,
+          "hasDefault": false,
+          "position": 4,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 5,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "getPortfolio",
+      "delegateParameters": [
+        {
+          "name": "query",
+          "type": "PortfolioQuery",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        },
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 1,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    },
+    {
+      "functionName": "getServiceStatus",
+      "delegateParameters": [
+        {
+          "name": "ctx",
+          "type": "RayfinContext<AppSchema, AudienceType.AzureAI | AudienceType.Fabric | AudienceType.Storage>",
+          "optional": false,
+          "hasDefault": false,
+          "position": 0,
+          "isFabricParameter": false
+        }
+      ],
+      "contextAudiences": [
+        "AzureAI",
+        "Fabric",
+        "Storage"
+      ]
+    }
+  ]
+}

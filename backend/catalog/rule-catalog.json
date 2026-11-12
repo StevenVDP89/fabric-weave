@@ -1,0 +1,365 @@
+{
+  "version": "1.2.0",
+  "categories": {
+    "foundation": {
+      "title": "Model foundation",
+      "weight": 25
+    },
+    "naming": {
+      "title": "Business-friendly naming",
+      "weight": 15
+    },
+    "descriptions": {
+      "title": "Descriptions",
+      "weight": 20
+    },
+    "instructions": {
+      "title": "AI instructions",
+      "weight": 15
+    },
+    "schema": {
+      "title": "AI data schema",
+      "weight": 15
+    },
+    "examples": {
+      "title": "Example prompts & verified answers",
+      "weight": 5
+    },
+    "governance": {
+      "title": "Enablement & governance",
+      "weight": 5
+    }
+  },
+  "tiers": [
+    {
+      "min": 85,
+      "label": "AI-ready"
+    },
+    {
+      "min": 65,
+      "label": "Almost ready"
+    },
+    {
+      "min": 40,
+      "label": "Needs work"
+    },
+    {
+      "min": 0,
+      "label": "Not ready"
+    }
+  ],
+  "gates": [
+    {
+      "id": "GATE-NO-MEASURES",
+      "title": "No explicit measures",
+      "cap": 40,
+      "rationale": "Copilot answers questions with measures. Without explicit measures it has to invent aggregations and results are unreliable."
+    },
+    {
+      "id": "GATE-QNA-OFF",
+      "title": "Q&A is turned off",
+      "cap": 50,
+      "rationale": "Prep data for AI (schema, verified answers) requires Q&A to be enabled on the model."
+    },
+    {
+      "id": "GATE-NO-CAPACITY",
+      "title": "Workspace not on a Copilot-eligible capacity",
+      "cap": 30,
+      "rationale": "Copilot only works for models in workspaces on a paid Fabric (F2+) or Power BI Premium (P1+) capacity."
+    }
+  ],
+  "rules": [
+    {
+      "id": "FND-001",
+      "category": "foundation",
+      "title": "Explicit measures exist for the numbers people ask about",
+      "weight": 4,
+      "severity": "critical",
+      "rationale": "Copilot prefers explicit measures; models with none force it to guess aggregations.",
+      "remediation": "Create DAX measures for the key numeric columns (sum, average, count, ratios).",
+      "fixKind": "add-measure"
+    },
+    {
+      "id": "FND-002",
+      "category": "foundation",
+      "title": "No orphan tables (everything is related)",
+      "weight": 3,
+      "severity": "major",
+      "rationale": "Unrelated tables cannot be sliced together, so cross-table questions return wrong or empty answers.",
+      "remediation": "Add relationships between fact and dimension tables or hide/remove unused tables.",
+      "fixKind": "manual",
+      "deepOnly": true
+    },
+    {
+      "id": "FND-003",
+      "category": "foundation",
+      "title": "Implicit aggregation is disabled on numeric columns",
+      "weight": 2,
+      "severity": "major",
+      "rationale": "Visible numeric columns that auto-aggregate compete with measures and produce inconsistent answers.",
+      "remediation": "Set summarizeBy to none on numeric columns (or hide them) and rely on explicit measures.",
+      "fixKind": "set-summarize-none",
+      "deepOnly": true
+    },
+    {
+      "id": "FND-004",
+      "category": "foundation",
+      "title": "A date table is marked as date table",
+      "weight": 2,
+      "severity": "major",
+      "rationale": "A marked date table enables reliable time intelligence (YTD, last year, trends) for natural language questions.",
+      "remediation": "Mark a calendar table as the date table and relate it to fact tables.",
+      "fixKind": "mark-date-table",
+      "deepOnly": true
+    },
+    {
+      "id": "FND-005",
+      "category": "foundation",
+      "title": "Technical key / ID columns are hidden",
+      "weight": 3,
+      "severity": "major",
+      "rationale": "Surrogate keys and join columns clutter the AI schema and attract meaningless answers.",
+      "remediation": "Hide key and join columns that business users never filter or group by.",
+      "fixKind": "hide-object"
+    },
+    {
+      "id": "FND-006",
+      "category": "foundation",
+      "title": "Measures have format strings",
+      "weight": 2,
+      "severity": "minor",
+      "rationale": "Format strings tell Copilot (and users) whether a measure is currency, a percentage or a count.",
+      "remediation": "Add formatString (for example #,0 or 0.0%) to every visible measure.",
+      "fixKind": "set-format-string"
+    },
+    {
+      "id": "FND-007",
+      "category": "foundation",
+      "title": "Relationship hygiene (no bi-directional or inactive-only paths)",
+      "weight": 2,
+      "severity": "minor",
+      "rationale": "Bi-directional filters and ambiguous paths create unexpected double counting in generated queries.",
+      "remediation": "Use single-direction relationships unless there is a documented need.",
+      "fixKind": "manual",
+      "deepOnly": true
+    },
+    {
+      "id": "FND-008",
+      "category": "foundation",
+      "title": "Model scope is focused (not hundreds of visible fields)",
+      "weight": 3,
+      "severity": "major",
+      "rationale": "Large unscoped models dilute the context Copilot can use; focused models answer better.",
+      "remediation": "Hide fields people never use or define an AI data schema that scopes the model.",
+      "fixKind": "set-ai-visibility"
+    },
+    {
+      "id": "NAM-001",
+      "category": "naming",
+      "title": "Visible tables have no technical prefixes or suffixes",
+      "weight": 3,
+      "severity": "major",
+      "rationale": "Names like dim_cust or fact_sales_tbl are meaningless to natural language questions.",
+      "remediation": "Rename to business terms such as Customer, Sales in the model source (Power BI Desktop or TMDL) and update the reports that use them.",
+      "fixKind": "manual"
+    },
+    {
+      "id": "NAM-002",
+      "category": "naming",
+      "title": "Visible columns and measures use business-friendly names",
+      "weight": 3,
+      "severity": "major",
+      "rationale": "snake_case, camelCase and codes (cust_nm, cntryCD) are poorly matched by users and the LLM.",
+      "remediation": "Use plain words with spaces and proper casing. Rename in the model source and update the reports that use them.",
+      "fixKind": "manual"
+    },
+    {
+      "id": "NAM-003",
+      "category": "naming",
+      "title": "No cryptic abbreviations in visible names",
+      "weight": 2,
+      "severity": "major",
+      "rationale": "Abbreviations (qty, amt, cust, nm, cd) hide meaning; Copilot cannot reliably expand them.",
+      "remediation": "Spell the words out. Rename in the model source and update the reports that use them.",
+      "fixKind": "manual"
+    },
+    {
+      "id": "NAM-004",
+      "category": "naming",
+      "title": "Visible field names are unambiguous across tables",
+      "weight": 1,
+      "severity": "minor",
+      "rationale": "Identical visible names in several tables (for example Name) make questions ambiguous.",
+      "remediation": "Make names specific (Customer Name, Product Name) or hide the duplicates.",
+      "fixKind": "manual"
+    },
+    {
+      "id": "DSC-001",
+      "category": "descriptions",
+      "title": "Visible tables have descriptions",
+      "weight": 3,
+      "severity": "major",
+      "rationale": "Table descriptions tell Copilot which table answers which kind of question.",
+      "remediation": "Describe what each table contains, its grain and when to use it.",
+      "fixKind": "add-description"
+    },
+    {
+      "id": "DSC-002",
+      "category": "descriptions",
+      "title": "Visible measures have descriptions",
+      "weight": 4,
+      "severity": "major",
+      "rationale": "Measure descriptions explain the calculation and business meaning and are read by Copilot.",
+      "remediation": "Describe each measure: what it counts, filters applied and the unit.",
+      "fixKind": "add-description"
+    },
+    {
+      "id": "DSC-003",
+      "category": "descriptions",
+      "title": "Visible columns have descriptions",
+      "weight": 3,
+      "severity": "minor",
+      "rationale": "Column descriptions disambiguate similar fields and document allowed values.",
+      "remediation": "Describe each visible column; focus on non-obvious fields first.",
+      "fixKind": "add-description"
+    },
+    {
+      "id": "DSC-004",
+      "category": "descriptions",
+      "title": "Descriptions are informative and concise (first 200 chars matter)",
+      "weight": 3,
+      "severity": "minor",
+      "rationale": "Copilot only reads roughly the first 200 characters; restating the name, placeholders (\"TBD\") and the same boilerplate repeated on many objects add nothing.",
+      "remediation": "Put the key information first, keep it under 200 characters, say something the name does not, and write each description for its own object.",
+      "fixKind": "add-description"
+    },
+    {
+      "id": "DSC-005",
+      "category": "descriptions",
+      "title": "Descriptions accurately reflect the object (LLM judge)",
+      "weight": 2,
+      "severity": "info",
+      "rationale": "A qualitative review catches vague or wrong descriptions that coverage checks cannot.",
+      "remediation": "Rewrite flagged descriptions using business context supplied by an owner.",
+      "fixKind": "add-description",
+      "llm": true,
+      "deepOnly": true
+    },
+    {
+      "id": "INS-001",
+      "category": "instructions",
+      "title": "AI instructions are defined",
+      "weight": 5,
+      "severity": "critical",
+      "rationale": "Instructions carry business context, terminology and defaults that the schema cannot express.",
+      "remediation": "Add model-level AI instructions (up to 10,000 characters).",
+      "fixKind": "set-instructions"
+    },
+    {
+      "id": "INS-002",
+      "category": "instructions",
+      "title": "Instructions have a useful length (300 - 10,000 characters) and are not repetitive filler",
+      "weight": 2,
+      "severity": "minor",
+      "rationale": "Too little guidance does not help; more than 10,000 characters is truncated; padded or repetitive text carries no guidance (at least 40 distinct words, 35% of all words).",
+      "remediation": "Expand thin instructions with concrete guidance, remove repetition, or trim to stay inside the limit.",
+      "fixKind": "set-instructions"
+    },
+    {
+      "id": "INS-003",
+      "category": "instructions",
+      "title": "Instructions cover context, terminology, defaults and preferred measures",
+      "weight": 5,
+      "severity": "major",
+      "rationale": "Good instructions explain the domain, glossary, default time frame and which measures to prefer; a section heading alone does not count.",
+      "remediation": "Add sections for business context, terminology, default filters/time frame and measure guidance, each with at least a sentence or two bullets of real content.",
+      "fixKind": "set-instructions",
+      "llm": true
+    },
+    {
+      "id": "INS-004",
+      "category": "instructions",
+      "title": "Instructions only refer to objects that exist in the model",
+      "weight": 3,
+      "severity": "minor",
+      "rationale": "Stale references to renamed or removed fields confuse Copilot.",
+      "remediation": "Update the instructions to use the current table, column and measure names.",
+      "fixKind": "set-instructions",
+      "deepOnly": true
+    },
+    {
+      "id": "SCH-001",
+      "category": "schema",
+      "title": "AI data schema scopes the model to relevant fields",
+      "weight": 4,
+      "severity": "major",
+      "rationale": "An explicit AI data schema limits Copilot to the fields that matter and removes technical noise.",
+      "remediation": "Define the AI data schema and mark technical or unused fields as hidden for AI.",
+      "fixKind": "set-ai-visibility",
+      "deepOnly": true
+    },
+    {
+      "id": "SCH-004",
+      "category": "schema",
+      "title": "Value indexing is enabled for text columns",
+      "weight": 2,
+      "severity": "minor",
+      "rationale": "Indexing lets Copilot resolve spelled values (for example a customer name) to the right filter.",
+      "remediation": "Enable indexing in the Copilot settings of the model.",
+      "fixKind": "set-indexing",
+      "deepOnly": true
+    },
+    {
+      "id": "EXM-001",
+      "category": "examples",
+      "title": "At least three example prompts are provided",
+      "weight": 3,
+      "severity": "minor",
+      "rationale": "Example prompts show users what to ask and steer Copilot towards supported questions.",
+      "remediation": "Add 3 to 6 example prompts that use real measures and dimensions.",
+      "fixKind": "set-example-prompts",
+      "deepOnly": true
+    },
+    {
+      "id": "EXM-002",
+      "category": "examples",
+      "title": "At least one verified answer is configured",
+      "weight": 2,
+      "severity": "info",
+      "rationale": "Verified answers pin trusted visuals to common questions.",
+      "remediation": "Author verified answers in Power BI Desktop or the service for the top questions.",
+      "fixKind": "manual",
+      "deepOnly": true
+    },
+    {
+      "id": "GOV-001",
+      "category": "governance",
+      "title": "Q&A is enabled on the model",
+      "weight": 2,
+      "severity": "critical",
+      "rationale": "Q&A must be on for Prep data for AI settings to take effect.",
+      "remediation": "Enable Q&A in the model settings.",
+      "fixKind": "set-qna"
+    },
+    {
+      "id": "GOV-002",
+      "category": "governance",
+      "title": "Model is Approved for Copilot",
+      "weight": 2,
+      "severity": "major",
+      "rationale": "Approved models are surfaced without warnings in standalone Copilot.",
+      "remediation": "Open Settings > Approved for Copilot on the model and approve it.",
+      "fixKind": "manual"
+    },
+    {
+      "id": "GOV-003",
+      "category": "governance",
+      "title": "Model is endorsed (Promoted or Certified)",
+      "weight": 1,
+      "severity": "info",
+      "rationale": "Endorsement signals trust and helps people choose the right model.",
+      "remediation": "Promote or certify the model once it is AI-ready.",
+      "fixKind": "manual"
+    }
+  ]
+}

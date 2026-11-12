@@ -1,0 +1,238 @@
+﻿@import 'tailwindcss';
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bridged tokens â€” kept in `@theme static` so the CSS vars are always
+   emitted, not tree-shaken when no Tailwind utility consumes them.
+   Required because <VegaVisual> and <DataGrid> read these at runtime via
+   `useCssTheme()` and project them into a JS theme object (Vega's SVG output
+   cannot resolve `var()` references). */
+@theme static {
+  --color-brand: #117865; /* bar/area fills, button-like brand surfaces */
+  --color-brand-foreground: #0a5c4d; /* line/point marks, branded text & emphasis */
+  --color-hover: #e4f1ed; /* row/cell hover surface in DataGrid + visuals */
+}
+
+@theme {
+  /* Color tokens â€” light theme
+     Usage: bg-*, text-*, border-* (e.g. bg-primary text-primary-foreground)
+     Each token has a -foreground pair for text on that surface. */
+  /* Fabric palette: neutral greys, Fabric green and an orange accent */
+  --color-background: #f3f2f1; /* page background: neutral grey */
+  --color-foreground: #201f1e; /* default text */
+
+  --color-card: #ffffff; /* card surfaces */
+  --color-card-foreground: #201f1e;
+
+  --color-popover: #ffffff; /* popover/dropdown surfaces */
+  --color-popover-foreground: #201f1e;
+
+  --color-primary: #117865; /* primary actions & buttons: Fabric green */
+  --color-primary-foreground: #ffffff;
+
+  --color-secondary: #edebe9; /* secondary actions */
+  --color-secondary-foreground: #201f1e;
+
+  --color-muted: #edebe9; /* subtle backgrounds */
+  --color-muted-foreground: #605e5c; /* subdued text */
+
+  --color-accent: #e4f1ed; /* accent highlights: pale Fabric green */
+  --color-accent-foreground: #201f1e;
+
+  --color-destructive: #b3261e; /* errors & destructive actions */
+  --color-destructive-foreground: #ffffff;
+
+  --color-border: #e1dfdd; /* default border */
+  --color-input: #c8c6c4; /* input field borders */
+  --color-ring: #117865; /* focus rings */
+
+  /* Landing hero surface: matches the backdrop of the ribbon artwork so the image melts into it. */
+  --color-hero: #dcdde1;
+
+  /* Readiness tones — AI-ready / Almost ready / Needs work / Not ready (destructive) + orange signal accent */
+  --color-success: #188a4e;
+  --color-caution: #8f7100;
+  --color-warning: #c75b12;
+  --color-signal: #f26b1d; /* brand orange: gauge needle, active-tab and nav markers */
+
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
+  --radius-xl: 6px;
+  --radius-2xl: 12px;
+  --radius-3xl: 16px;
+  --radius-4xl: 24px;
+  --radius-5xl: 32px;
+  --radius-6xl: 40px;
+  --radius-full: 9999px;
+  --radius: 4px;
+
+  /* Spacing â€” 4px grid; use only these tokens, no interpolation. *-nudge = base âˆ’ 2px.
+     Usage: p-*, m-*, gap-* (e.g. p-400 gap-300) */
+  --spacing-none: 0;
+  --spacing-100-nudge: 2px;
+  --spacing-100: 4px;
+  --spacing-200-nudge: 6px;
+  --spacing-200: 8px;
+  --spacing-300-nudge: 10px;
+  --spacing-300: 12px;
+  --spacing-400: 16px;
+  --spacing-500: 20px;
+  --spacing-600: 24px;
+  --spacing-700: 28px;
+  --spacing-800: 32px;
+
+  /* Font Sizes â€” 100-based scale 
+     Usage: text-* (e.g. text-300, text-hero-900) */
+  --text-100: 10px;
+  --text-200: 12px;
+  --text-300: 14px;
+  --text-400: 16px;
+  --text-500: 20px;
+  --text-600: 24px;
+  --text-hero-700: 28px;
+  --text-hero-800: 32px;
+  --text-hero-900: 40px;
+  --text-hero-1000: 68px;
+
+  /* Line Heights â€” paired with font sizes
+     Usage: leading-* (e.g. leading-300) */
+  --leading-100: 14px;
+  --leading-200: 16px;
+  --leading-300: 20px;
+  --leading-400: 22px;
+  --leading-500: 28px;
+  --leading-600: 32px;
+  --leading-hero-700: 36px;
+  --leading-hero-800: 40px;
+  --leading-hero-900: 52px;
+  --leading-hero-1000: 92px;
+
+  /* Font Weights
+     Usage: font-* (e.g. font-semibold) */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Font Families
+     Usage: font-* (e.g. font-heading, font-base) */
+  --font-heading:
+    'IBM Plex Sans Condensed', 'Segoe UI', 'Segoe UI Web (West European)',
+    /* headings, titles, display text */ -apple-system, BlinkMacSystemFont,
+    Roboto, 'Helvetica Neue', sans-serif;
+  --font-base:
+    'IBM Plex Sans', 'Segoe UI', 'Segoe UI Web (West European)',
+    /* body text, labels, UI controls */ -apple-system, BlinkMacSystemFont,
+    Roboto, 'Helvetica Neue', sans-serif;
+  --font-monospace:
+    'IBM Plex Mono', Consolas, 'Courier New', Courier,
+    monospace; /* code, pre-formatted text */
+  --font-numeric:
+    'IBM Plex Mono', Bahnschrift, 'Segoe UI',
+    /* KPI values, numeric displays */ 'Segoe UI Web (West European)',
+    -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+
+  /* Icon Sizes â€” 100-based scale
+     Usage: icon-size-* custom utility (e.g. icon-size-200) */
+  --icon-size-100: 12px;
+  --icon-size-200: 16px;
+  --icon-size-300: 20px;
+  --icon-size-400: 24px;
+  --icon-size-500: 28px;
+  --icon-size-600: 32px;
+  --icon-size-700: 48px;
+}
+
+@utility icon-size-* {
+  width: --value(--icon-size-*);
+  height: --value(--icon-size-*);
+}
+
+@layer base {
+  .dark {
+    /* Color tokens — dark theme */
+    --color-background: #191918;
+    --color-foreground: #f3f2f1;
+
+    --color-card: #242423;
+    --color-card-foreground: #f3f2f1;
+
+    --color-popover: #242423;
+    --color-popover-foreground: #f3f2f1;
+
+    --color-primary: #2fb58f;
+    --color-primary-foreground: #04150f;
+
+    --color-secondary: #302f2e;
+    --color-secondary-foreground: #f3f2f1;
+
+    --color-muted: #201f1e;
+    --color-muted-foreground: #b3b0ad;
+
+    --color-accent: #1f3a33;
+    --color-accent-foreground: #f3f2f1;
+
+    --color-destructive: #e5534b;
+    --color-destructive-foreground: #1a0705;
+
+    --color-border: #3b3a39;
+    --color-input: #4a4846;
+    --color-ring: #4fd1aa;
+
+    --color-hero: #202c28;
+
+    --color-success: #3fbf7f;
+    --color-caution: #e6c229;
+    --color-warning: #f08c2e;
+    --color-signal: #ff7a2e;
+
+    --color-brand: #2fb58f;
+    --color-brand-foreground: #5cd6b3;
+    --color-hover: #25362f;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-base antialiased;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* Gauge needle sweep, Fabric Weave's signature motion. */
+.dial-sweep {
+  transition: stroke-dashoffset 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.dial-needle {
+  transition: transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}

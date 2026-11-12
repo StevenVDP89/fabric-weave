@@ -1,0 +1,81 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: CI
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  publish:
+    name: Build and publish
+    needs: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      RAYFIN_TELEMETRY_OPTOUT: '1'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Check that the tag, rayfin.base.yml and the changelog agree
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          base_version=$(sed -n 's/^version: *//p' app/rayfin/rayfin.base.yml | head -n1 | tr -d '\r"' | xargs)
+          top_heading=$(grep -m1 '^## ' CHANGELOG.md | tr -d '\r')
+          changelog_version=$(printf '%s\n' "$top_heading" | sed -E -n 's/^## \[?([0-9][0-9A-Za-z.+-]*).*/\1/p')
+          echo "tag: $tag | rayfin.base.yml: $base_version | top CHANGELOG heading: $top_heading"
+          if [ "$base_version" != "$tag" ]; then
+            echo "Tag v$tag does not match version $base_version in app/rayfin/rayfin.base.yml"; exit 1
+          fi
+          if [ "$changelog_version" != "$tag" ]; then
+            echo "Tag v$tag does not match the top heading of CHANGELOG.md ($top_heading)"; exit 1
+          fi
+      - name: Build the package
+        run: |
+          name="fabric-weave-${GITHUB_REF_NAME#v}"
+          # export-ignore rules in .gitattributes decide what is left out
+          git archive --format=zip --prefix="$name/" -o "$name.zip" HEAD
+          unzip -Z1 "$name.zip" > listing.txt
+          echo "$(wc -l < listing.txt) entries"
+          for must in install.mjs backend/deploy.mjs LICENSE THIRD_PARTY_NOTICES.md app/package-lock.json app/rayfin/rayfin.base.yml app/scripts/validate-functions.mjs deployment/Deploy.ps1 deployment/Build-Package.ps1 deployment/customer.config.example.json docs/DEPLOYMENT-GUIDE.md; do
+            grep -qxF "$name/$must" listing.txt || { echo "the archive is missing $must"; exit 1; }
+          done
+          if grep -qE "^$name/(app/\.agents/|app/rayfin/rayfin\.yml$|tools/snapshots/|deployment/(customer\.config|last-deployment-result)\.json$)" listing.txt; then
+            echo "the archive contains files that must not ship (app/.agents, a generated rayfin.yml, tools/snapshots or a deployment config/result)"; exit 1
+          fi
+          rm listing.txt
+          echo "ASSET=$name.zip" >> "$GITHUB_ENV"
+      - name: Check that the installer runs from the unpacked archive
+        run: |
+          mkdir unpacked
+          unzip -q "$ASSET" -d unpacked
+          cd "unpacked/${ASSET%.zip}"
+          node install.mjs --help > /dev/null
+          node install.mjs --prepare-only
+          test -s app/rayfin/rayfin.yml
+          node --test "tools/test/*.test.mjs"
+      - name: Checksums
+        run: |
+          sha256sum "$ASSET" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+      - name: Publish the release
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64 # v3.0.3
+        with:
+          files: |
+            ${{ env.ASSET }}
+            SHA256SUMS.txt
+          generate_release_notes: true
+          prerelease: ${{ contains(github.ref_name, '-') }}

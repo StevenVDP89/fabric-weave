@@ -1,0 +1,207 @@
+[
+  {
+    "id": "sloppy",
+    "inventory": { "model_name": "Sloppy Sales", "endorsement": "None", "on_dedicated_capacity": true },
+    "dataset": {
+      "name": "Sloppy Sales",
+      "tables": [
+        {
+          "name": "fact_sales_tbl",
+          "description": "",
+          "isHidden": false,
+          "columns": [
+            { "name": "sls_id", "dataType": "Int64", "isKey": true, "isHidden": false, "description": "", "formatString": null },
+            { "name": "cust_id", "dataType": "Int64", "isHidden": false, "description": "", "formatString": null },
+            { "name": "prod_cd", "dataType": "String", "isHidden": false, "description": "", "formatString": null },
+            { "name": "ord_dt", "dataType": "DateTime", "isHidden": false, "description": "", "formatString": null },
+            { "name": "amt_usd", "dataType": "Double", "isHidden": false, "description": "Amount", "formatString": null },
+            { "name": "qty", "dataType": "Int64", "isHidden": false, "description": "", "formatString": null },
+            { "name": "disc_pct", "dataType": "Double", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": [
+            { "name": "tot_amt", "expression": "SUM(fact_sales_tbl[amt_usd])", "isHidden": false, "description": "", "formatString": null },
+            { "name": "tot_qty", "expression": "SUM(fact_sales_tbl[qty])", "isHidden": false, "description": "", "formatString": null },
+            { "name": "mrgn", "expression": "[tot_amt] * 0.3", "isHidden": false, "description": "", "formatString": "0.0" }
+          ]
+        },
+        {
+          "name": "dim_cust_tbl",
+          "description": "",
+          "isHidden": false,
+          "columns": [
+            { "name": "cust_id", "dataType": "Int64", "isHidden": false, "description": "", "formatString": null },
+            { "name": "cust_nm", "dataType": "String", "isHidden": false, "description": "", "formatString": null },
+            { "name": "cntry_cd", "dataType": "String", "isHidden": false, "description": "", "formatString": null },
+            { "name": "seg", "dataType": "String", "isHidden": false, "description": "", "formatString": null },
+            { "name": "qty", "dataType": "Int64", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": []
+        },
+        {
+          "name": "dim_prod_tbl",
+          "description": "",
+          "isHidden": false,
+          "columns": [
+            { "name": "prod_cd", "dataType": "String", "isHidden": false, "description": "", "formatString": null },
+            { "name": "prod_nm", "dataType": "String", "isHidden": false, "description": "", "formatString": null },
+            { "name": "cat_nm", "dataType": "String", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": []
+        },
+        {
+          "name": "dim_dt",
+          "description": "",
+          "isHidden": false,
+          "columns": [
+            { "name": "dt", "dataType": "DateTime", "isHidden": false, "description": "", "formatString": null },
+            { "name": "yr", "dataType": "Int64", "isHidden": false, "description": "", "formatString": null },
+            { "name": "mth_nm", "dataType": "String", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": []
+        }
+      ],
+      "relationships": [
+        { "name": "r1", "fromTable": "fact_sales_tbl", "fromColumn": "cust_id", "toTable": "dim_cust_tbl", "toColumn": "cust_id" },
+        { "name": "r2", "fromTable": "fact_sales_tbl", "fromColumn": "prod_cd", "toTable": "dim_prod_tbl", "toColumn": "prod_cd" },
+        { "name": "r3", "fromTable": "fact_sales_tbl", "fromColumn": "ord_dt", "toTable": "dim_dt", "toColumn": "dt" }
+      ]
+    }
+  },
+  {
+    "id": "decent",
+    "inventory": { "model_name": "Retail Performance", "endorsement": "Certified", "on_dedicated_capacity": true },
+    "dataset": {
+      "name": "Retail Performance",
+      "tables": [
+        {
+          "name": "Sales",
+          "description": "One row per order line, with the revenue, quantity and discount recorded when the order was placed.",
+          "isHidden": false,
+          "columns": [
+            { "name": "Order Line ID", "dataType": "String", "isKey": true, "isHidden": true, "description": "", "formatString": null },
+            { "name": "Customer ID", "dataType": "Int64", "isHidden": true, "description": "", "formatString": null },
+            { "name": "Product ID", "dataType": "Int64", "isHidden": true, "description": "", "formatString": null },
+            { "name": "Order Date", "dataType": "DateTime", "isHidden": false, "description": "Calendar day on which the customer placed the order.", "formatString": "dd/MM/yyyy" },
+            { "name": "Sales Amount", "dataType": "Decimal", "isHidden": false, "description": "Net invoiced revenue of the order line in US dollars, after discounts and before tax.", "formatString": "#,0.00" },
+            { "name": "Quantity", "dataType": "Int64", "isHidden": false, "description": "Number of product units shipped on the order line.", "formatString": "#,0" },
+            { "name": "Discount Percent", "dataType": "Double", "isHidden": false, "description": "Share of the list price that was discounted, between 0 and 1.", "formatString": "0.0%" },
+            { "name": "Internal Cost", "dataType": "Decimal", "isHidden": false, "visibility": "Hidden", "description": "", "formatString": "#,0.00" },
+            { "name": "Region", "dataType": "String", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": [
+            { "name": "Total Sales", "expression": "SUM(Sales[Sales Amount])", "isHidden": false, "description": "Sum of net invoiced revenue for the orders in the current filter context.", "formatString": "#,0" },
+            { "name": "Total Quantity", "expression": "SUM(Sales[Quantity])", "isHidden": false, "description": "Number of product units shipped for the orders in the current filter context.", "formatString": "#,0" },
+            { "name": "Average Order Value", "expression": "DIVIDE([Total Sales], DISTINCTCOUNT(Sales[Order Line ID]))", "isHidden": false, "description": "Net revenue divided by the number of distinct order lines.", "formatString": "#,0.00" },
+            { "name": "Gross Margin %", "expression": "DIVIDE([Total Sales] - SUM(Sales[Internal Cost]), [Total Sales])", "isHidden": false, "synonyms": ["margin", "profitability"], "description": "Gross profit as a share of net revenue.", "formatString": "0.0%" }
+          ]
+        },
+        {
+          "name": "Customer",
+          "description": "People and companies that bought from the retail chain, one row per customer.",
+          "isHidden": false,
+          "columns": [
+            { "name": "Customer ID", "dataType": "Int64", "isHidden": true, "description": "", "formatString": null },
+            { "name": "Customer Name", "dataType": "String", "isHidden": false, "description": "Legal name used on invoices to the buyer.", "formatString": null },
+            { "name": "Country", "dataType": "String", "isHidden": false, "description": "Country of the invoice address.", "formatString": null },
+            { "name": "Segment", "dataType": "String", "isHidden": false, "description": "Commercial segment assigned by the sales team, such as consumer or business.", "formatString": null },
+            { "name": "Region", "dataType": "String", "isHidden": false, "description": "Sales region that owns the customer account.", "formatString": null }
+          ],
+          "measures": []
+        },
+        {
+          "name": "Product",
+          "description": "Catalogue of items sold, with their category hierarchy.",
+          "isHidden": false,
+          "columns": [
+            { "name": "Product ID", "dataType": "Int64", "isHidden": true, "description": "", "formatString": null },
+            { "name": "Product Name", "dataType": "String", "isHidden": false, "description": "Marketing name of the item as printed on the packaging.", "formatString": null },
+            { "name": "Category", "dataType": "String", "isHidden": false, "description": "Top level product family used for merchandising.", "formatString": null },
+            { "name": "Subcategory", "dataType": "String", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": []
+        },
+        {
+          "name": "Date",
+          "description": "Calendar table with one row per day, used for every time based analysis.",
+          "isHidden": false,
+          "columns": [
+            { "name": "Date", "dataType": "DateTime", "isHidden": false, "description": "Calendar day, without a time component.", "formatString": "dd/MM/yyyy" },
+            { "name": "Year", "dataType": "Int64", "isHidden": false, "description": "Calendar year of the date.", "formatString": "0" },
+            { "name": "Month Name", "dataType": "String", "isHidden": false, "description": "Full English name of the month of the date.", "formatString": null }
+          ],
+          "measures": []
+        },
+        {
+          "name": "Refresh Log",
+          "description": "",
+          "isHidden": true,
+          "columns": [
+            { "name": "Loaded At", "dataType": "DateTime", "isHidden": false, "description": "", "formatString": null }
+          ],
+          "measures": []
+        }
+      ],
+      "relationships": [
+        { "name": "r1", "fromTable": "Sales", "fromColumn": "Customer ID", "toTable": "Customer", "toColumn": "Customer ID" },
+        { "name": "r2", "fromTable": "Sales", "fromColumn": "Product ID", "toTable": "Product", "toColumn": "Product ID" },
+        { "name": "r3", "fromTable": "Sales", "fromColumn": "Order Date", "toTable": "Date", "toColumn": "Date" }
+      ]
+    }
+  },
+  {
+    "id": "placeholders",
+    "inventory": { "model_name": "Placeholder Orders", "endorsement": "Promoted", "on_dedicated_capacity": false },
+    "dataset": {
+      "name": "Placeholder Orders",
+      "tables": [
+        {
+          "name": "Orders",
+          "description": "Orders table.",
+          "isHidden": false,
+          "columns": [
+            { "name": "Order Number", "dataType": "String", "isKey": true, "isHidden": false, "description": "Unique number printed on the order confirmation sent to the buyer.", "formatString": null },
+            { "name": "Customer Name", "dataType": "String", "isHidden": false, "description": "Name of each customer", "formatString": null },
+            { "name": "Order Status", "dataType": "String", "isHidden": false, "description": "TBD", "formatString": null },
+            { "name": "Ship Date", "dataType": "DateTime", "isHidden": false, "description": "n/a", "formatString": "dd/MM/yyyy" },
+            { "name": "Shipping Cost", "dataType": "Decimal", "isHidden": false, "description": "Description", "formatString": "#,0.00" },
+            { "name": "Order Total", "dataType": "Decimal", "isHidden": false, "description": "Lorem ipsum dolor sit amet", "formatString": "#,0.00" },
+            { "name": "Order Notes", "dataType": "String", "isHidden": false, "description": "Test", "formatString": null },
+            { "name": "Channel", "dataType": "String", "isHidden": false, "description": "This column is used for reporting purposes in the model.", "formatString": null },
+            { "name": "Priority", "dataType": "String", "isHidden": false, "description": "This column is used for reporting purposes in the model.", "formatString": null },
+            { "name": "Carrier", "dataType": "String", "isHidden": false, "description": "This column is used for reporting purposes in the model.", "formatString": null },
+            { "name": "Warehouse", "dataType": "String", "isHidden": false, "description": "This column is used for reporting purposes in the model.", "formatString": null },
+            { "name": "Currency", "dataType": "String", "isHidden": false, "description": "This column is used for reporting purposes in the model.", "formatString": null },
+            { "name": "Packing Slip", "dataType": "String", "isHidden": true, "description": "This column is used for reporting purposes in the model.", "formatString": null }
+          ],
+          "measures": [
+            { "name": "Total Orders", "expression": "COUNTROWS(Orders)", "isHidden": false, "description": "Calculated measure used in dashboards and reports.", "formatString": "#,0" },
+            { "name": "Revenue", "expression": "SUM(Orders[Order Total])", "isHidden": false, "description": "Calculated measure used in dashboards and reports.", "formatString": "#,0.00" },
+            { "name": "Freight", "expression": "SUM(Orders[Shipping Cost])", "isHidden": false, "description": "Calculated measure used in dashboards and reports.", "formatString": "#,0.00" },
+            { "name": "Average Basket", "expression": "DIVIDE([Revenue], [Total Orders])", "isHidden": false, "description": "Calculated measure used in dashboards and reports.", "formatString": "#,0.00" },
+            { "name": "Freight Share", "expression": "DIVIDE([Freight], [Revenue])", "isHidden": false, "description": "Calculated measure used in dashboards and reports.", "formatString": null },
+            { "name": "Late Orders", "expression": "CALCULATE(COUNTROWS(Orders), Orders[Order Status] = \"Late\")", "isHidden": false, "description": "Number of orders that left the warehouse after the promised ship date.", "formatString": "#,0" }
+          ]
+        },
+        {
+          "name": "Customers",
+          "description": "Customers",
+          "isHidden": false,
+          "columns": [
+            { "name": "Account Owner", "dataType": "String", "isHidden": false, "description": "Reference text maintained by the fulfilment team each night.", "formatString": null },
+            { "name": "Account Tier", "dataType": "String", "isHidden": false, "description": "Reference text maintained by the fulfilment team each night.", "formatString": null },
+            { "name": "Account Segment", "dataType": "String", "isHidden": false, "description": "Reference text maintained by the fulfilment team each night.", "formatString": null },
+            { "name": "Account Region", "dataType": "String", "isHidden": false, "description": "Reference text maintained by the fulfilment team each night.", "formatString": null },
+            { "name": "Credit Limit", "dataType": "Decimal", "isHidden": false, "description": "Maximum open balance the finance team allows for the customer.", "formatString": "#,0.00" }
+          ],
+          "measures": []
+        }
+      ],
+      "relationships": []
+    }
+  },
+  {
+    "id": "empty",
+    "inventory": { "model_name": "Empty Model", "endorsement": null, "on_dedicated_capacity": true },
+    "dataset": { "name": "Empty Model", "tables": [], "relationships": [] }
+  }
+]

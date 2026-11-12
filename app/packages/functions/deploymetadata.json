@@ -1,0 +1,852 @@
+{
+  "runtime": "TypeScript",
+  "functionsMetadata": [
+    {
+      "name": "listWorkspaces",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "listWorkspaces"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<WorkspaceView[]>",
+        "fabricFunctionParameters": [
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'listWorkspaces',\r\n  async (ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>): Promise<WorkspaceView[]> =>\r\n    guarded('listWorkspaces', ctx, () => listWorkspaces(ctx)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "saveWorkspaceSetting",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "saveWorkspaceSetting"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<WorkspaceView>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "writeMode",
+            "dataType": "WriteMode",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "inScope",
+            "dataType": "boolean",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'saveWorkspaceSetting',\r\n  async (\r\n    workspaceId: string,\r\n    writeMode: WriteMode,\r\n    inScope: boolean,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<WorkspaceView> => guarded('saveWorkspaceSetting', ctx, () => saveWorkspaceSetting(ctx, workspaceId, writeMode, inScope)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "listModels",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "listModels"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ModelView[]>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'listModels',\r\n  async (\r\n    workspaceId: string,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<ModelView[]> => guarded('listModels', ctx, () => listModels(ctx, workspaceId)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "assessModel",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "assessModel"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<AssessmentView>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "useJudge",
+            "dataType": "boolean",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'assessModel',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    useJudge: boolean,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<AssessmentView> => guarded('assessModel', ctx, () => assessModel(ctx, workspaceId, modelId, useJudge)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "getFixProposals",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "getFixProposals"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ProposalView>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "useAi",
+            "dataType": "boolean",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'getFixProposals',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    useAi: boolean,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<ProposalView> => guarded('getFixProposals', ctx, () => getFixProposals(ctx, workspaceId, modelId, useAi)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "applyFixes",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "applyFixes"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ApplyResultView>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "proposals",
+            "dataType": "FixProposal[]",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "baseDigest",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'applyFixes',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    proposals: FixProposal[],\r\n    baseDigest: string,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<ApplyResultView> => guarded('applyFixes', ctx, () => applyFixes(ctx, workspaceId, modelId, proposals, baseDigest)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "rollbackChangeSet",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "rollbackChangeSet"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<RollbackResultView>",
+        "fabricFunctionParameters": [
+          {
+            "name": "changeSetId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "discardLaterEdits",
+            "dataType": "boolean",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'rollbackChangeSet',\r\n  async (\r\n    changeSetId: string,\r\n    discardLaterEdits: boolean,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<RollbackResultView> => guarded('rollbackChangeSet', ctx, () => rollbackChangeSet(ctx, changeSetId, discardLaterEdits === true)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "getAgentReadiness",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "getAgentReadiness"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<AgentAvailability>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'getAgentReadiness',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<AgentAvailability> => guarded('getAgentReadiness', ctx, () => getAgentReadiness(ctx, workspaceId, modelId)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "setApprovedForCopilot",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "setApprovedForCopilot"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ApprovalResult>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "approved",
+            "dataType": "boolean",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'setApprovedForCopilot',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    approved: boolean,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<ApprovalResult> => guarded('setApprovedForCopilot', ctx, () => setApprovedForCopilot(ctx, workspaceId, modelId, approved)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "draftBusinessContext",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "draftBusinessContext"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<BusinessContextDraft>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'draftBusinessContext',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<BusinessContextDraft> => guarded('draftBusinessContext', ctx, () => draftBusinessContext(ctx, workspaceId, modelId)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "interviewBusinessContext",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "interviewBusinessContext"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<InterviewStep>",
+        "fabricFunctionParameters": [
+          {
+            "name": "workspaceId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "modelId",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "turns",
+            "dataType": "InterviewTurn[]",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "existing",
+            "dataType": "string",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "finish",
+            "dataType": "boolean",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'interviewBusinessContext',\r\n  async (\r\n    workspaceId: string,\r\n    modelId: string,\r\n    turns: InterviewTurn[],\r\n    existing: string,\r\n    finish: boolean,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<InterviewStep> =>\r\n    guarded('interviewBusinessContext', ctx, () => interviewBusinessContext(ctx, workspaceId, modelId, turns, existing, finish)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "getPortfolio",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "getPortfolio"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<PortfolioView>",
+        "fabricFunctionParameters": [
+          {
+            "name": "query",
+            "dataType": "PortfolioQuery",
+            "hasDefaultValue": false
+          },
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'getPortfolio',\r\n  async (\r\n    query: PortfolioQuery,\r\n    ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>,\r\n  ): Promise<PortfolioView> => guarded('getPortfolio', ctx, () => getPortfolio(ctx, query)),\r\n  [],\r\n)"
+    },
+    {
+      "name": "getServiceStatus",
+      "scriptFile": "src\\function_app.ts",
+      "bindings": [
+        {
+          "name": "req",
+          "type": "httpTrigger",
+          "direction": "in",
+          "authLevel": "anonymous",
+          "methods": [
+            "post"
+          ],
+          "route": "getServiceStatus"
+        },
+        {
+          "name": "$return",
+          "type": "http",
+          "direction": "out"
+        },
+        {
+          "name": "__generic_AzureAI",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "AzureAI"
+        },
+        {
+          "name": "__generic_Fabric",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Fabric"
+        },
+        {
+          "name": "__generic_Storage",
+          "direction": "in",
+          "type": "FabricItem",
+          "alias": "",
+          "audienceType": "Storage"
+        }
+      ],
+      "fabricProperties": {
+        "fabricMetadataSchemaVersion": "1.0",
+        "fabricFunctionReturnType": "Promise<ServiceStatus>",
+        "fabricFunctionParameters": [
+          {
+            "name": "ctx",
+            "dataType": "RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>",
+            "hasDefaultValue": false
+          }
+        ]
+      },
+      "functionCode": "udf.func(\r\n  'getServiceStatus',\r\n  async (ctx: RayfinContext<AppSchema, AudienceType.Fabric | AudienceType.AzureAI | AudienceType.Storage>): Promise<ServiceStatus> =>\r\n    guarded('getServiceStatus', ctx, () => getServiceStatus(ctx)),\r\n  [],\r\n)"
+    }
+  ]
+}
