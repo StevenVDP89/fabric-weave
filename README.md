@@ -15,7 +15,7 @@ that the tenant, capacity and model settings let AI agents reach the model at al
 
 ## Download and install in your own tenant
 
-Download `fabric-weave-1.0.0.zip` and `SHA256SUMS.txt` from the
+Download the `fabric-weave-<version>.zip` asset and `SHA256SUMS.txt` from the
 [latest release](https://github.com/StevenVDP89/fabric-weave/releases/latest), verify the ZIP's SHA-256 with
 `Get-FileHash`, and extract it to a short path such as `C:\fabric-weave`. Prefer the versioned release asset
 over GitHub's automatically generated source ZIP.

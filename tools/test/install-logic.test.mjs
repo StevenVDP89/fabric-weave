@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
+import { setTimeout as delay } from 'node:timers/promises';
 import {
   RAYFIN_YML_HEADER,
   TOKEN_MAX_AGE_MS,
@@ -242,7 +243,8 @@ test('withTimeout passes a signal and turns a timeout into a readable error', as
   await ok('https://example.test/a', { method: 'POST' });
   assert.ok(signal instanceof AbortSignal);
 
-  const slow = withTimeout((url, init) => new Promise((_, reject) => init.signal.addEventListener('abort', () => reject(init.signal.reason))), 20);
+  // Model pending fetch I/O: AbortSignal.timeout alone does not keep Node's event loop alive.
+  const slow = withTimeout((url, init) => delay(5000, undefined, { signal: init.signal }), 20);
   await assert.rejects(() => slow('https://example.test/items?x=secret', { method: 'DELETE' }), (e) => {
     assert.match(e.message, /^DELETE https:\/\/example\.test\/items did not answer within \d+ seconds?$/);
     assert.ok(!e.message.includes('secret'), 'the query string is not echoed');

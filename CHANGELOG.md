@@ -3,6 +3,14 @@
 All notable changes to Fabric Weave. Versions follow [Semantic Versioning](https://semver.org/). The release workflow
 checks that the top heading of this file matches the tag and the `version:` in `app/rayfin/rayfin.base.yml`.
 
+## 1.0.1
+
+- Publish the customer-safe source and download instructions on GitHub, without deployment credentials,
+  tenant-specific configuration or dependencies.
+- Build release ZIPs with the existing verified package builder, including provenance metadata and SHA-256.
+- Make the timeout test model pending network I/O so Node 22 does not cancel it when its event loop becomes idle.
+  No installer or app runtime behaviour changes.
+
 ## 1.0.0
 
 First public release. A complete version plus the hardening done for customer installs.

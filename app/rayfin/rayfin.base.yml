@@ -3,7 +3,7 @@
 # of your own tenant. Edit this file, not rayfin.yml. Run `node install.mjs --prepare-only` to regenerate it.
 id: fabric-weave
 name: Fabric Weave
-version: 1.0.0
+version: 1.0.1
 services:
   functions:
     enabled: true
